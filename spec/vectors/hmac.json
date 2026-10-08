@@ -1,0 +1,72 @@
+{
+  "description": "HMAC-SHA256 vectors: RFC 4231 test cases 1-7 plus a DuelElo-shaped case. Key and data are hex; expected is lowercase hex, truncated to 'truncateHex' characters when present.",
+  "cases": [
+    {
+      "name": "RFC 4231 case 1",
+      "keyHex": "0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b",
+      "dataHex": "4869205468657265",
+      "expected": "b0344c61d8db38535ca8afceaf0bf12b881dc200c9833da726e9376c2e32cff7"
+    },
+    {
+      "name": "RFC 4231 case 2",
+      "keyHex": "4a656665",
+      "dataHex": "7768617420646f2079612077616e7420666f72206e6f7468696e673f",
+      "expected": "5bdcc146bf60754e6a042426089575c75a003f089d2739839dec58b964ec3843"
+    },
+    {
+      "name": "RFC 4231 case 3",
+      "keyHex": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "dataHex": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "expected": "773ea91e36800e46854db8ebd09181a72959098b3ef8c122d9635514ced565fe"
+    },
+    {
+      "name": "RFC 4231 case 4",
+      "keyHex": "0102030405060708090a0b0c0d0e0f10111213141516171819",
+      "dataHex": "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+      "expected": "82558a389a443c0ea4cc819899f2083a85f0faa3e578f8077a2e3ff46729665b"
+    },
+    {
+      "name": "RFC 4231 case 5 (truncated to 128 bits)",
+      "keyHex": "0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c",
+      "dataHex": "546573742057697468205472756e636174696f6e",
+      "expected": "a3b6167473100ee06e0c796c2955552b",
+      "truncateHex": 32
+    },
+    {
+      "name": "RFC 4231 case 6 (key larger than block)",
+      "keyHex": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "dataHex": "54657374205573696e67204c6172676572205468616e20426c6f636b2d53697a65204b6579202d2048617368204b6579204669727374",
+      "expected": "60e431591ee0b67f0d8a26aacbf5b77f8e0bc6213728c5140546040f0ee37f54"
+    },
+    {
+      "name": "RFC 4231 case 7 (key and data larger than block)",
+      "keyHex": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "dataHex": "5468697320697320612074657374207573696e672061206c6172676572207468616e20626c6f636b2d73697a65206b657920616e642061206c6172676572207468616e20626c6f636b2d73697a6520646174612e20546865206b6579206e6565647320746f20626520686173686564206265666f7265206265696e6720757365642062792074686520484d414320616c676f726974686d2e",
+      "expected": "9b09ffa71b942fcb27635fbcd5b0e944bfdc63644f0713938a7f51535c3a35e2"
+    },
+    {
+      "name": "32-byte secret, statement-like data",
+      "keyHex": "5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f",
+      "dataHex": "4445327c3132333a3435367c317c41736876616c652d53617267657261737c546872616c6c2d4172656135327c33307c437c4b4f7c313530307c313435307c307c347c313739313530303030307c31373931353030303431",
+      "expected": "78f01da3529f623cc00050008dfce21ffe279c1a5e5f160660a4e93a4aa1ebd2"
+    },
+    {
+      "name": "63-byte key (block-size boundary)",
+      "keyHex": "030a11181f262d343b424950575e656c737a81888f969da4abb2b9c0c7ced5dce3eaf1f8ff060d141b222930373e454c535a61686f767d848b9299a0a7aeb5",
+      "dataHex": "626c6f636b2d73697a65206b657920626f756e64617279",
+      "expected": "df4b9925498f9402eba3bbec174208776cb95e1e25917699399acd3583eac72d"
+    },
+    {
+      "name": "64-byte key (block-size boundary)",
+      "keyHex": "030a11181f262d343b424950575e656c737a81888f969da4abb2b9c0c7ced5dce3eaf1f8ff060d141b222930373e454c535a61686f767d848b9299a0a7aeb5bc",
+      "dataHex": "626c6f636b2d73697a65206b657920626f756e64617279",
+      "expected": "eb5bb80f443e8f2332b0d24160af30dfe92468b67a830a8f603a912f6b2c5058"
+    },
+    {
+      "name": "65-byte key (block-size boundary)",
+      "keyHex": "030a11181f262d343b424950575e656c737a81888f969da4abb2b9c0c7ced5dce3eaf1f8ff060d141b222930373e454c535a61686f767d848b9299a0a7aeb5bcc3",
+      "dataHex": "626c6f636b2d73697a65206b657920626f756e64617279",
+      "expected": "62355ef98cf30c0b548eb2da763ada5916b3147e4ab8d5b5cf400153f6afe846"
+    }
+  ]
+}

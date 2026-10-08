@@ -1,0 +1,128 @@
+{
+  "description": "Canonical statements (SPEC §2.4 match, §2.5 witness) and their HMAC-SHA256 signatures with the test secrets below (key = bytes(secret)). Witness input 't' is raw GetServerTime(); the statement floors it to 10 s. Strings are UTF-8.",
+  "secrets": {
+    "challenger": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    "challenged": "5f3a5f3a5f3a5f3a5f3a5f3a5f3a5f3a5f3a5f3a5f3a5f3a5f3a5f3a5f3a5f3a",
+    "witness": "c0ffeec0ffeec0ffeec0ffeec0ffeec0ffeec0ffeec0ffeec0ffeec0ffeec0ff"
+  },
+  "cases": [
+    {
+      "name": "knockout, challenger wins",
+      "kind": "match",
+      "input": {
+        "matchId": "12345678901:98765432102",
+        "region": 1,
+        "challenger": "Ashvale-Sargeras",
+        "challenged": "Thrall-Area52",
+        "level": 30,
+        "winner": "C",
+        "how": "KO",
+        "cPre": 1500,
+        "dPre": 1450,
+        "cReady": 0,
+        "dReady": 4,
+        "tStart": 1791500000,
+        "tEnd": 1791500041
+      },
+      "statement": "DE2|12345678901:98765432102|1|Ashvale-Sargeras|Thrall-Area52|30|C|KO|1500|1450|0|4|1791500000|1791500041",
+      "sigC": "e78ca64264954dfd1f9f1d2bbd1de69c59c46be0d19657c9070676c7174a67ad",
+      "sigD": "cfa4e5765d8d26bf607be7de435fbf04761353f18177b060296143aaac6d65bd"
+    },
+    {
+      "name": "fled, challenged wins",
+      "kind": "match",
+      "input": {
+        "matchId": "1:2",
+        "region": 3,
+        "challenger": "Jaina-Silvermoon",
+        "challenged": "Garrosh-Silvermoon",
+        "level": 60,
+        "winner": "D",
+        "how": "FLED",
+        "cPre": 1200,
+        "dPre": 1834,
+        "cReady": 12,
+        "dReady": 0,
+        "tStart": 1791600000,
+        "tEnd": 1791600300
+      },
+      "statement": "DE2|1:2|3|Jaina-Silvermoon|Garrosh-Silvermoon|60|D|FLED|1200|1834|12|0|1791600000|1791600300",
+      "sigC": "2f80fa0493c71b215c856d07e9df527d48e9d7b7bcb64c3cb0570b688bf86d8d",
+      "sigD": "4d883c9c001e83b5bdfbe02bd7f435435ed22660a6fd3ee51d465cb1b4d772f9"
+    },
+    {
+      "name": "no countdown seen: tStart 0",
+      "kind": "match",
+      "input": {
+        "matchId": "555:666",
+        "region": 1,
+        "challenger": "Bowdiddley-Sargeras",
+        "challenged": "Rankedbank-Sargeras",
+        "level": 80,
+        "winner": "C",
+        "how": "KO",
+        "cPre": 1200,
+        "dPre": 1200,
+        "cReady": 0,
+        "dReady": 0,
+        "tStart": 0,
+        "tEnd": 1791700000
+      },
+      "statement": "DE2|555:666|1|Bowdiddley-Sargeras|Rankedbank-Sargeras|80|C|KO|1200|1200|0|0|0|1791700000",
+      "sigC": "e65b4f9648979759814c1a34b1500c34e238f8c7fd35f557f2bfb9ffae20db08",
+      "sigD": "662448726e239a44440839e53204e94ba6f6a924a37f777d4daf0a1e8de084e6"
+    },
+    {
+      "name": "non-ASCII names (UTF-8)",
+      "kind": "match",
+      "input": {
+        "matchId": "42:43",
+        "region": 2,
+        "challenger": "Ælfrïc-Kazzak",
+        "challenged": "Lúthien-TwistingNether",
+        "level": 1,
+        "winner": "D",
+        "how": "KO",
+        "cPre": 0,
+        "dPre": 5000,
+        "cReady": 63,
+        "dReady": 0,
+        "tStart": 1791800000,
+        "tEnd": 1791800005
+      },
+      "statement": "DE2|42:43|2|Ælfrïc-Kazzak|Lúthien-TwistingNether|1|D|KO|0|5000|63|0|1791800000|1791800005",
+      "sigC": "4274403c048feeec695dd1937f4e9f23f109c0ab0cc162430c91cff2e656fa3f",
+      "sigD": "fe68073e80e294d1bf5106d78f9f339aef0e993ad02a9b176c26d5ef3f183735"
+    },
+    {
+      "name": "witness, knockout",
+      "kind": "witness",
+      "input": {
+        "region": 1,
+        "witness": "Onlooker-Sargeras",
+        "winner": "Ashvale-Sargeras",
+        "loser": "Thrall-Area52",
+        "how": "KO",
+        "t": 1791500040,
+        "zone": 84
+      },
+      "statement": "DW2|1|Onlooker-Sargeras|Ashvale-Sargeras|Thrall-Area52|KO|1791500040|84",
+      "sig": "1819d3bfbf83d965560fafbcf0ee83e494aff61f6bd18593baad1fd3216d5e90"
+    },
+    {
+      "name": "witness, fled, time floored to 10 s",
+      "kind": "witness",
+      "input": {
+        "region": 3,
+        "witness": "Bystander-Kazzak",
+        "winner": "Garrosh-Silvermoon",
+        "loser": "Jaina-Silvermoon",
+        "how": "FLED",
+        "t": 1791600309,
+        "zone": 85
+      },
+      "statement": "DW2|3|Bystander-Kazzak|Garrosh-Silvermoon|Jaina-Silvermoon|FLED|1791600300|85",
+      "sig": "466227b8d993bf4b6efb84c213c05c8e62b421ac1151883e0d1997470b209eb6"
+    }
+  ]
+}

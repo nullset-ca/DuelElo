@@ -1,0 +1,60 @@
+# Tag a version (git tag v0.5.0 && git push --tags) to test, package and
+# upload a release to GitHub, CurseForge and Wago.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # create the GitHub release
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Check the Discord invite is filled in
+        run: |
+          if grep -rn "discord.gg/INVITE" DuelElo README.md .github/ISSUE_TEMPLATE; then
+            echo "Replace the placeholder Discord invite before releasing."; exit 1
+          fi
+
+      - name: Run tests
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq luajit
+          luajit tests/run.lua
+
+      - name: Package and upload
+        uses: BigWigsMods/packager@v2
+        env:
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
+
+      # Posts the release notes to the Discord #announcements channel.
+      # Skipped until the DISCORD_RELEASE_WEBHOOK secret is set.
+      - name: Announce on Discord
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_RELEASE_WEBHOOK }}
+        run: |
+          if [ -z "$WEBHOOK" ]; then echo "No DISCORD_RELEASE_WEBHOOK secret; skipping."; exit 0; fi
+          notes=$(awk -v h="## $GITHUB_REF_NAME" '$0 == h { f = 1; next } /^## / { f = 0 } f' CHANGELOG.md)
+          repo="https://github.com/$GITHUB_REPOSITORY"
+          jq -n --arg tag "$GITHUB_REF_NAME" --arg notes "$notes" --arg repo "$repo" '{
+            username: "DuelElo",
+            avatar_url: "https://raw.githubusercontent.com/nullset-ca/DuelElo/main/branding/logo-512.png",
+            embeds: [{
+              title: "DuelElo \($tag) is out",
+              url: "\($repo)/releases/tag/\($tag)",
+              description: ($notes + "\n\nUpdate with CurseForge or Wago, or download it from GitHub."),
+              color: 15251480,
+              fields: [
+                { name: "CurseForge", value: "[Download](https://www.curseforge.com/projects/1732941)", inline: true },
+                { name: "Wago", value: "[Download](https://addons.wago.io/addons/duelelo)", inline: true },
+                { name: "GitHub", value: "[Release](\($repo)/releases/tag/\($tag))", inline: true }
+              ]
+            }]
+          }' | curl -fsS -H "Content-Type: application/json" -d @- "$WEBHOOK"

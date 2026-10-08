@@ -1,0 +1,35 @@
+# macOS
+.DS_Store
+
+# Build / packaging output
+.release/
+*.zip
+
+# Local test tooling
+.luarocks/
+lua_modules/
+luacov.*.out
+
+# Editor
+.vscode/
+.idea/
+
+# Python tooling
+.venv/
+
+# Built release zips
+dist/
+
+# TypeScript workspace
+node_modules/
+.next/
+*.tsbuildinfo
+coverage/
+.env
+.env.local
+next-env.d.ts
+.pglite/
+
+# Generated ladder data addon (built by .github/workflows/ladder.yml)
+DuelElo_Ladder/*.lua
+DuelElo_Ladder/*.toc

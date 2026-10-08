@@ -1,0 +1,44 @@
+name: Bug report
+description: Something in DuelElo is broken or behaves wrongly.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Not sure it's a bug? Ask on [Discord](https://discord.gg/8Jyz7g4p64) first.
+  - type: input
+    id: version
+    attributes:
+      label: DuelElo version
+      description: "Type `/duelelo version` in game."
+      placeholder: "0.4.2"
+    validations:
+      required: true
+  - type: dropdown
+    id: client
+    attributes:
+      label: Game client
+      options:
+        - WoW Forever
+        - Retail
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+      placeholder: "I won a ranked duel but my rating didn't change…"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: How to make it happen again
+      placeholder: "1. Duel someone who also has DuelElo\n2. Pick Ranked\n3. …"
+  - type: textarea
+    id: error
+    attributes:
+      label: Lua error (if any)
+      description: "Turn on `/console scriptErrors 1` (or use BugSack), then paste the full error here."
+      render: text

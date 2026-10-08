@@ -1,0 +1,19 @@
+# Run the addon's headless test suite on every push and pull request.
+name: Tests
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install LuaJIT
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq luajit
+      - name: Syntax check
+        run: for f in DuelElo/*.lua DuelElo/UI/*.lua; do luajit -bl "$f" > /dev/null; done
+      - name: Run tests
+        run: luajit tests/run.lua

@@ -1,0 +1,28 @@
+{
+  "description": "Own build snapshot strings (SPEC §3.13): item links -> slot entries, classic talent strings, build hashes (first 16 hex of SHA-256 of fmt|gear|talents) and the DS1 snapshot signature (HMAC-SHA256 with bytes(secret)).",
+  "items": [
+    { "link": "|cffff8000|Hitem:19019:1900:0:0:0:0:0:0:60:0:0:0:0|h[Thunderfury, Blessed Blade of the Windseeker]|h|r", "parsed": "19019:1900" },
+    { "link": "|cff1eff00|Hitem:15210:0:0:0:0:0:1201:0:60|h[Raider's Shortsword of the Monkey]|h|r", "parsed": "15210:0:0:0:0:1201" },
+    { "link": "|cffa335ee|Hitem:16921:2588:0:0:0:0:0:0:60|h[Halo of Transcendence]|h|r", "parsed": "16921:2588" },
+    { "link": "|cff0070dd|Hitem:211017:0:213743:0:0:0:-42:12345:25|h[Gemmed]|h|r", "parsed": "211017:0:213743:0:0:-42" },
+    { "link": "item:18348", "parsed": "18348" },
+    { "link": "|Hitem:0:0|h[broken]|h", "parsed": null },
+    { "link": "not a link", "parsed": null }
+  ],
+  "gear": { "links": { "1": "|cffa335ee|Hitem:16921:2588:0:0:0:0:0:0:60|h[Halo of Transcendence]|h|r", "4": "item:6096", "13": "item:18348", "16": "|cffff8000|Hitem:19019:1900:0:0:0:0:0:0:60:0:0:0:0|h[Thunderfury, Blessed Blade of the Windseeker]|h|r", "17": "|cff1eff00|Hitem:15210:0:0:0:0:0:1201:0:60|h[Raider's Shortsword of the Monkey]|h|r", "19": "item:23192" }, "gear": "1=16921:2588,13=18348,16=19019:1900,17=15210:0:0:0:0:1201" },
+  "talents": [
+    { "name": "two trees, talents sorted by tier and column", "trees": [[[1,1,3],[1,2,0],[1,3,3],[2,1,0],[2,2,5],[2,3,0],[3,1,0],[3,2,1],[3,3,3],[4,1,0],[4,2,2],[5,2,1],[5,3,3],[6,1,1],[7,2,1],[7,3,0],[8,2,0],[9,2,0]],[[1,2,0],[1,3,5],[2,1,0],[2,2,5],[3,1,0],[3,2,5],[3,3,0],[4,1,5],[4,2,0]],[[1,1,0],[1,2,0]]], "string": "303050013021311-05050505", "points": [23,20] },
+    { "name": "unsorted index order", "trees": [[[2,1,2],[1,2,1],[1,1,3]],[[1,1,0]],[[1,1,1]]], "string": "312--1", "points": [6,0,1] },
+    { "name": "no points", "trees": [[[1,1,0]],[[1,1,0]],[[1,1,0]]], "string": "", "points": [0] }
+  ],
+  "hashes": [
+    { "fmt": "classic", "gear": "1=16921:2588,13=18348,16=19019:1900,17=15210:0:0:0:0:1201", "talents": "30305001302-05050005525010051", "hash": "4829e52b8fd03582" },
+    { "fmt": "none", "gear": "", "talents": "", "hash": "844f62858e454e3d" },
+    { "fmt": "traits", "gear": "1=19019", "talents": "BYGAAAAAAAAAAAAAAAAAAAAAAAMzMzMjZmZmZmxYmZmZAAAAAAAAAAAAzMzMDzMLzA", "hash": "d5232f524df2b40b" }
+  ],
+  "secret": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+  "signatures": [
+    { "key": "12345678901:98765432102", "loadout": "4829e52b8fd03582", "buffs": "10938,1459,25389", "cds": "1953:4,i18854:73", "used": "2139@3,12042@-2", "late": false, "string": "DS1|12345678901:98765432102|4829e52b8fd03582|10938,1459,25389|1953:4,i18854:73|2139@3,12042@-2|0", "sig": "66800eafcf54ad0dba91f0b6cb5ec2ae260311371352cc8fbdbcdaa189503ebe" },
+    { "key": "C:1791500000:Thrall-Area52", "loadout": "844f62858e454e3d", "buffs": "", "cds": "", "used": "", "late": true, "string": "DS1|C:1791500000:Thrall-Area52|844f62858e454e3d||||1", "sig": "70720c036d8f217aa75a8bf71286491a6d2ab58d4da487d5c175c7b1390a8347" }
+  ]
+}

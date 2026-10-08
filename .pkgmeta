@@ -1,0 +1,18 @@
+# BigWigs packager config: ship only the DuelElo addon folder.
+package-as: DuelElo
+
+move-folders:
+  DuelElo/DuelElo: DuelElo
+
+ignore:
+  - tests
+  - spec
+  - probe
+  - branding
+  - .github
+  - .gitignore
+  - .pkgmeta
+
+manual-changelog:
+  filename: CHANGELOG.md
+  markup-type: markdown

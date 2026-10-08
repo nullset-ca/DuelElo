@@ -1,0 +1,52 @@
+## Interface: 16001, 120100
+## Title: DuelElo
+## Notes: Ranked dueling for WoW Forever. Tracks your duel record and ranked rating.
+## Author: Nullset
+## X-License: MIT
+## X-Website: https://github.com/nullset-ca/DuelElo
+## X-Curse-Project-ID: 1732941
+## X-Wago-ID: 96EXgXNg
+## Version: 0.6.0
+## IconTexture: Interface\AddOns\DuelElo\Media\icon
+## AddonCompartmentFunc: DuelElo_OnAddonCompartmentClick
+## AddonCompartmentFuncOnEnter: DuelElo_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: DuelElo_OnAddonCompartmentLeave
+## SavedVariables: DuelEloDB
+## SavedVariablesPerCharacter: DuelEloCharDB
+
+Locale.lua
+Parse.lua
+Ladder.lua
+Crypto.lua
+Statement.lua
+Loadout.lua
+Codec.lua
+Export.lua
+Elo.lua
+Glicko.lua
+Rules.lua
+Readiness.lua
+WidgetModel.lua
+Leaderboard.lua
+Session.lua
+Data.lua
+BannedAuras.lua
+Core.lua
+Keys.lua
+Comm.lua
+Channel.lua
+Duel.lua
+Dev.lua
+Commands.lua
+ReadinessAdapter.lua
+LoadoutAdapter.lua
+UI\Art.lua
+UI\Main.lua
+UI\Results.lua
+UI\Prompt.lua
+UI\Options.lua
+UI\Community.lua
+UI\Widget.lua
+UI\Report.lua
+UI\Upload.lua
+UI\Tooltip.lua

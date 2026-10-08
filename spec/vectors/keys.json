@@ -1,0 +1,29 @@
+{
+  "description": "Character key fingerprints (SPEC \u00a72.1): fp = first 32 hex chars of SHA256(bytes(secret)). 'entropy' shows how a secret is derived: secret = SHA256(entropy string), hex.",
+  "fingerprints": [
+    {
+      "name": "all zero secret",
+      "secret": "0000000000000000000000000000000000000000000000000000000000000000",
+      "fp": "66687aadf862bd776c8fc18b8e9f8e20"
+    },
+    {
+      "name": "all ff secret",
+      "secret": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "fp": "af9613760f72635fbdb44a5a0a63c39f"
+    },
+    {
+      "name": "counting bytes",
+      "secret": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "fp": "630dcd2966c4336691125448bbb25b4f"
+    },
+    {
+      "name": "sample secret",
+      "secret": "5f3a5f3a5f3a5f3a5f3a5f3a5f3a5f3a5f3a5f3a5f3a5f3a5f3a5f3a5f3a5f3a",
+      "fp": "7fadc787cd950b0dcb3357655924c1be"
+    }
+  ],
+  "entropy": {
+    "input": "12345.678|1000.5|1791500000|1791500000|Player-1234-0ABCDEF0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|512.25",
+    "secret": "1577c27c12e64c03075094f36a8ac324a121e67802ebe7535eed45fbfa77c47d"
+  }
+}

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- DuelElo logo: two blades (steel vs gold) clash point to point, forming a V for victory -->
+  <defs>
+    <g id="steel">
+      <path d="M0,-200 L-16,-166 L-16,92 L0,92 Z" fill="#eef1f5"/>
+      <path d="M0,-200 L16,-166 L16,92 L0,92 Z" fill="#9aa4b5"/>
+      <path d="M0,-200 L16,-166 L16,92 L-16,92 L-16,-166 Z" fill="none" stroke="#0b0f19" stroke-width="7" stroke-linejoin="round"/>
+      <rect x="-56" y="92" width="112" height="22" rx="4" fill="#9aa4b5" stroke="#0b0f19" stroke-width="7" stroke-linejoin="round"/>
+      <rect x="-10" y="114" width="20" height="50" fill="#5a3a1c" stroke="#0b0f19" stroke-width="7"/>
+      <path d="M0,160 L18,178 L0,196 L-18,178 Z" fill="#9aa4b5" stroke="#0b0f19" stroke-width="7" stroke-linejoin="round"/>
+    </g>
+    <g id="gold">
+      <path d="M0,-200 L-16,-166 L-16,92 L0,92 Z" fill="#ffd45a"/>
+      <path d="M0,-200 L16,-166 L16,92 L0,92 Z" fill="#cf951f"/>
+      <path d="M0,-200 L16,-166 L16,92 L-16,92 L-16,-166 Z" fill="none" stroke="#0b0f19" stroke-width="7" stroke-linejoin="round"/>
+      <rect x="-56" y="92" width="112" height="22" rx="4" fill="#cf951f" stroke="#0b0f19" stroke-width="7" stroke-linejoin="round"/>
+      <rect x="-10" y="114" width="20" height="50" fill="#5a3a1c" stroke="#0b0f19" stroke-width="7"/>
+      <path d="M0,160 L18,178 L0,196 L-18,178 Z" fill="#cf951f" stroke="#0b0f19" stroke-width="7" stroke-linejoin="round"/>
+    </g></defs>
+  <rect x="14" y="14" width="484" height="484" rx="92" fill="#e9b53a" stroke="#0b0f19" stroke-width="8"/>
+  <rect x="34" y="34" width="444" height="444" rx="74" fill="#141b2d" stroke="#0b0f19" stroke-width="6"/>
+  <path d="M256.0,56.0 L271.3,105.9 L310.4,83.2 L292.4,127.0 L360.2,129.6 L293.4,154.6 L343.6,198.6 L279.1,175.6 L288.1,236.2 L256.0,188.0 L220.8,244.8 L232.3,176.2 L172.3,196.3 L210.7,156.0 L169.9,132.8 L217.9,126.0 L202.8,84.6 L242.0,109.7 Z" fill="#f07a2a" stroke="#0b0f19" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M256.0,90.8 L263.8,126.6 L292.1,105.0 L276.8,136.0 L302.1,139.9 L281.1,152.4 L299.2,173.0 L273.3,168.6 L273.8,196.9 L256.0,174.4 L239.1,194.4 L239.3,167.9 L211.0,174.0 L234.7,151.8 L201.7,138.4 L236.0,136.5 L218.6,103.4 L247.8,125.4 Z" fill="#ffe27a"/>
+  <use href="#steel" transform="translate(168 300) rotate(30) scale(0.88)"/>
+  <use href="#gold" transform="translate(344 300) rotate(-30) scale(0.88)"/>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1280 640">
+  <!-- GitHub social preview / store banner -->
+  <rect width="1280" height="640" fill="#0f1524"/>
+  <g fill="#141b2d">
+    <path d="M760,0 L1280,0 L1280,640 L520,640 Z"/>
+  </g>
+  <rect y="616" width="1280" height="24" fill="#e9b53a"/>
+  <image x="110" y="140" width="360" height="360" xlink:href="logo.svg"/>
+  <text x="540" y="318" font-family="Avenir Next" font-weight="800" font-size="132" fill="#ffffff">Duel<tspan fill="#ffd45a">Elo</tspan></text>
+  <text x="546" y="384" font-family="Avenir Next" font-weight="600" font-size="38" fill="#c9cfdb">Ranked dueling for World of Warcraft</text>
+  <text x="546" y="444" font-family="Avenir Next" font-weight="600" font-size="27" fill="#e9b53a">Every duel tracked  ·  ELO ranks  ·  Realm leaderboard</text>
+</svg>
