@@ -1047,9 +1047,10 @@ test("the welcome message and help say WoW Forever", function()
     ok(env.printed[1]:find("Ranked dueling for WoW Forever", 1, true), "help header")
 end)
 
-test("the TOC lists Forever first", function()
+test("the TOC targets WoW Classic Forever only", function()
+    -- the packager flags each upload for the game versions listed here
     local toc = assert(io.open("DuelElo/DuelElo.toc")):read("*a")
-    ok(toc:find("## Interface: 16001, 120100", 1, true))
+    ok(toc:find("## Interface: 16001\n", 1, true))
     local probe = assert(io.open("probe/DuelEloProbe/DuelEloProbe.toc")):read("*a")
     ok(probe:match("## Interface:[^\n]*16001"), "probe loads on Forever")
 end)

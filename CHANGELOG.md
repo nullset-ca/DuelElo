@@ -30,6 +30,8 @@
 - Fixed: no duel was recorded on WoW Forever. Its names have surnames
   ("Duelio Vodee"), which DuelElo mistook for a realm; names now come from
   the whole name the game shows, on your real realm.
+- DuelElo now targets WoW Classic Forever only. Retail still loads it with
+  *Load out of date AddOns*, for development.
 - Fixed: typing in the game's Settings search box blamed DuelElo for a
   blocked action. DuelElo's settings page now draws its own controls, which the
   search never touches.

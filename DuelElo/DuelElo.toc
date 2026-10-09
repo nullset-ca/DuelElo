@@ -1,4 +1,4 @@
-## Interface: 16001, 120100
+## Interface: 16001
 ## Title: DuelElo
 ## Notes: Ranked dueling for WoW Forever. Tracks your duel record and ranked rating.
 ## Author: Nullset
