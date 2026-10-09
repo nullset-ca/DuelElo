@@ -30,6 +30,13 @@
 - Fixed: no duel was recorded on WoW Forever. Its names have surnames
   ("Duelio Vodee"), which DuelElo mistook for a realm; names now come from
   the whole name the game shows, on your real realm.
+- Fixed: typing in the game's Settings search box blamed DuelElo for a
+  blocked action. DuelElo's settings page now draws its own controls, which the
+  search never touches.
+- Fixed: on WoW Forever, challenging someone could print "No player named …"
+  in chat. DuelElo now messages players on your realm by their plain name.
+- Fixed: on WoW Forever the opponent's class could be missing, and your own
+  characters could show up on the realm leaderboard from earlier test builds.
 - Fixed: ranked was impossible on WoW Forever, which hides health and mana
   from addons. Those two checks now show as *unchecked* instead of blocking.
 - Fixed: the hidden leaderboard channel could take `/1` and push General and

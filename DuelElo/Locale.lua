@@ -100,6 +100,7 @@ local ENGLISH = {
     "Chat summary",
     "Chat summary %s",
     "Click anywhere to continue",
+    "Click for the next choice, right-click for the previous.",
     "Click to open",
     "Click: open DuelElo  ·  Right-click: menu",
     "Code hidden · Ctrl+C copies it",

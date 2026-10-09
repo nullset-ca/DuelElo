@@ -31,8 +31,8 @@ end
 local function findClass(full)
     for _, unit in ipairs(SEARCH_UNITS) do
         if ns.UnitFullName(unit) == full then
-            local _, classFile = UnitClass(unit)
-            if type(classFile) == "string" and not ns.IsSecret(classFile) then return classFile end
+            local classFile = ns.UnitClassFile(unit)
+            if classFile then return classFile end
         end
     end
     return nil

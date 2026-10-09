@@ -424,11 +424,20 @@ end)
 if type(StartDuel) == "function" then
     hooksecurefunc("StartDuel", function(unit)
         local target = UnitName(unit or "target")
-        log(("HOOK StartDuel unit=%s name=%s"):format(safe(unit), safe(target)))
-        local name, realm = UnitFullName(unit or "target")
-        if type(name) == "string" then
-            local full = (realm and realm ~= "") and (name .. "-" .. realm) or name
-            send("HELLO", "WHISPER", full)
+        local u = unit or "target"
+        local guid = UnitGUID and UnitGUID(u)
+        local gi = guid and GetPlayerInfoByGUID and { pcall(GetPlayerInfoByGUID, guid) } or {}
+        log(("HOOK StartDuel unit=%s name=%s UnitClass=%s byGUID name=[%s] class=%s"):format(safe(unit), safe(target),
+            select(2, call(UnitClass, u)), safe(gi[7]), safe(gi[3])))
+        -- whole name from the GUID: on Forever UnitFullName gives (first, surname)
+        local whole = gi[1] and type(gi[7]) == "string" and gi[7] ~= "" and gi[7]
+        if whole then
+            send("HELLO", "WHISPER", (gi[8] and gi[8] ~= "") and (whole .. "-" .. gi[8]) or whole)
+        else
+            local name, realm = UnitFullName(u)
+            if type(name) == "string" then
+                send("HELLO", "WHISPER", (realm and realm ~= "") and (name .. "-" .. realm) or name)
+            end
         end
     end)
 end

@@ -1170,6 +1170,26 @@ test("Forever: our own channel broadcast isn't stored as a stranger", function()
     eq(DuelEloDB.players["Bran Drav-ClassicBetaPvP"].rating, 1650, "other players still are")
 end)
 
+test("Forever: the class comes from the GUID when UnitClass hides it", function()
+    local env = foreverEnv({ target = { name = "Unfortunate", surname = "Limitations", class = "WARLOCK" } })
+    env.secrets.WARLOCK = true  -- UnitClass returns a secret...
+    local byGuid = GetPlayerInfoByGUID
+    GetPlayerInfoByGUID = function(guid)  -- ...the GUID lookup doesn't
+        local a, _, c, d, e, f, g = byGuid(guid)
+        return a, "WARLOCK_BY_GUID", c, d, e, f, g
+    end
+    StartDuel("target")
+    env.fire("CHAT_MSG_SYSTEM", "Unfortunate Limitations has fled from Duelio Vodee in a duel")
+    eq(last(env).class, "WARLOCK_BY_GUID")
+    eq(last(env).how, "FLED")
+end)
+
+test("Forever: whispers to players on our realm use the plain name", function()
+    local env = foreverEnv({ target = { name = "Bran", surname = "Drav", class = "ROGUE" } })
+    StartDuel("target")
+    eq(env.lastSent("H~").target, "Bran Drav")
+end)
+
 test("Forever: /duel with the target uses the whole name", function()
     local env = foreverEnv({ target = { name = "Bran", surname = "Drav", class = "ROGUE" } })
     eq(env.ns.Duel.OpponentFromDuelArg(""), "Bran Drav-ClassicBetaPvP")

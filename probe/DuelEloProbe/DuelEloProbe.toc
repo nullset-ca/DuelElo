@@ -2,7 +2,7 @@
 ## Title: DuelElo Probe
 ## Notes: Temporary diagnostic addon for DuelElo development. Logs duel events and tests addon messaging.
 ## Author: DuelElo
-## Version: 0.0.3
+## Version: 0.0.5
 ## SavedVariables: DuelEloProbeDB
 
 Probe.lua

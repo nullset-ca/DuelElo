@@ -80,6 +80,18 @@ local function unitNameRealm(unit)
     return name, (type(realm) == "string" and realm ~= "") and realm or nil
 end
 
+-- A unit's class token ("ROGUE"), from UnitClass or, if that is hidden, the GUID.
+function ns.UnitClassFile(unit)
+    local ok, _, classFile = pcall(UnitClass, unit)
+    if ok and type(classFile) == "string" and not isSecret(classFile) then return classFile end
+    local guid = UnitGUID and UnitGUID(unit)
+    if type(guid) == "string" and not isSecret(guid) and GetPlayerInfoByGUID then
+        local ok2, _, byGuid = pcall(GetPlayerInfoByGUID, guid)
+        if ok2 and type(byGuid) == "string" and byGuid ~= "" and not isSecret(byGuid) then return byGuid end
+    end
+    return nil
+end
+
 function ns.UnitFullName(unit)
     if not UnitExists(unit) then return nil end
     local name, realm = unitNameRealm(unit)

@@ -4,7 +4,7 @@ local _, ns = ...
 local Data = {}
 ns.Data = Data
 
-Data.SCHEMA = 3
+Data.SCHEMA = 4
 Data.MAX_HISTORY = 1000   -- detailed entries kept; totals are kept forever
 
 local function newChar()
@@ -93,6 +93,19 @@ end
 ACCOUNT_MIGRATIONS[3] = function(db)
     local w = type(db.settings) == "table" and db.settings.widget
     if type(w) == "table" then w.shown = false end
+end
+
+-- Schema 4 (v0.6): before WoW Forever names were understood, our own
+-- characters' broadcasts were stored as strangers named "First Last-Last"
+-- (the surname taken for a realm). No real realm equals a surname, so drop them.
+ACCOUNT_MIGRATIONS[4] = function(db)
+    if type(db.players) ~= "table" then return end
+    for key in pairs(db.players) do
+        if type(key) == "string" then
+            local surname, realm = key:match("^%S+ (%S+)%-(.+)$")
+            if surname and surname == realm then db.players[key] = nil end
+        end
+    end
 end
 
 local function migrate(db, steps)

@@ -144,11 +144,23 @@ end)
 
 test("schema 3 hides a widget saved as shown, once", function()
     local db = Data.InitAccount({ schema = 2, settings = { widget = { shown = true, preset = "full" } } })
-    eq(db.schema, 3)
+    eq(db.schema, Data.SCHEMA)
     eq(db.settings.widget.shown, false)
     eq(db.settings.widget.preset, "full", "other widget settings kept")
     db.settings.widget.shown = true
     eq(Data.InitAccount(db).settings.widget.shown, true, "turning it back on sticks")
+end)
+
+test("schema 4 drops our own Forever characters stored as 'First Last-Last'", function()
+    local db = Data.InitAccount({ schema = 3, players = {
+        ["Duelio Vodee-Vodee"] = { rating = 1200, games = 0 },
+        ["Bran Drav-ClassicBetaPvP"] = { rating = 1650, games = 30 },
+        ["Thrall-Area52"] = { rating = 1500, games = 3 },
+    } })
+    eq(db.schema, 4)
+    eq(db.players["Duelio Vodee-Vodee"], nil)
+    eq(db.players["Bran Drav-ClassicBetaPvP"].rating, 1650)
+    eq(db.players["Thrall-Area52"].rating, 1500)
 end)
 
 test("a fresh account starts with the widget hidden", function()

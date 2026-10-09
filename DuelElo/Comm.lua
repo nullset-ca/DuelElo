@@ -42,6 +42,10 @@ end
 
 function Comm.Send(msg, channel, target)
     if not (C_ChatInfo and C_ChatInfo.SendAddonMessage) then return end
+    -- Whisper players on our realm by their plain name: WoW Forever answers
+    -- "No player named …" to some realm-qualified forms, and the plain name
+    -- always works on the same realm.
+    if channel == "WHISPER" and type(target) == "string" then target = ns.DisplayName(target) end
     local ok, err = pcall(C_ChatInfo.SendAddonMessage, COMM_PREFIX, msg, channel, target)
     if not ok then ns.DPrint("send failed: " .. tostring(err)) end
 end
