@@ -59,11 +59,32 @@ end
 -- Unit helpers
 ---------------------------------------------------------------------------
 
-function ns.UnitFullName(unit)
-    if not UnitExists(unit) then return nil end
+-- What GetNormalizedRealmName strips from a realm's display name.
+local function normalizeRealm(realm) return (realm:gsub("[%s%-']", "")) end
+
+-- A unit's name and realm (nil on our own realm). WoW Forever names have
+-- surnames ("Duelio Vodee"): there UnitFullName returns the surname where
+-- retail returns the realm, while GetPlayerInfoByGUID gives the whole name on
+-- both clients and a realm only for other realms. Chat and addon messages use
+-- that whole name. UnitFullName stays the fallback (NPCs, older clients).
+local function unitNameRealm(unit)
+    local guid = UnitGUID and UnitGUID(unit)
+    if type(guid) == "string" and not isSecret(guid) and GetPlayerInfoByGUID then
+        local ok, _, _, _, _, _, name, realm = pcall(GetPlayerInfoByGUID, guid)
+        if ok and type(name) == "string" and name ~= "" and not isSecret(name) and not isSecret(realm) then
+            return name, (type(realm) == "string" and realm ~= "") and normalizeRealm(realm) or nil
+        end
+    end
     local name, realm = UnitFullName(unit)
     if type(name) ~= "string" or isSecret(name) or isSecret(realm) then return nil end
-    return Parse.Normalize((realm and realm ~= "") and (name .. "-" .. realm) or name, me.realm)
+    return name, (type(realm) == "string" and realm ~= "") and realm or nil
+end
+
+function ns.UnitFullName(unit)
+    if not UnitExists(unit) then return nil end
+    local name, realm = unitNameRealm(unit)
+    if not name then return nil end
+    return Parse.Normalize(realm and (name .. "-" .. realm) or name, me.realm)
 end
 
 -- "Thrall-Sargeras" -> "Thrall" when Sargeras is our realm.
@@ -110,9 +131,11 @@ function handlers.ADDON_LOADED(name)
 end
 
 function handlers.PLAYER_LOGIN()
-    local name, realm = UnitFullName("player")
+    local name, realm = unitNameRealm("player")
     me.name = name
-    me.realm = (realm and realm ~= "") and realm or GetNormalizedRealmName()
+    -- our realm from GetNormalizedRealmName: on Forever UnitFullName's "realm" is the surname
+    local normalized = GetNormalizedRealmName and GetNormalizedRealmName()
+    me.realm = (type(normalized) == "string" and normalized ~= "") and normalized or realm
     me.full = Parse.Normalize(name, me.realm)
     me.class = select(2, UnitClass("player"))
     ns.engine = ns.Comm.NewEngine()

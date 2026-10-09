@@ -27,6 +27,9 @@
 - **Clearer ranked rules:** the setup guide has a "How ranked works" step,
   the ranked prompt has a **?** with the rules, and *Strict* is now called
   *Wait for cooldowns* (`/duelelo cooldowns on|off`; `strict` still works).
+- Fixed: no duel was recorded on WoW Forever. Its names have surnames
+  ("Duelio Vodee"), which DuelElo mistook for a realm; names now come from
+  the whole name the game shows, on your real realm.
 - Fixed: ranked was impossible on WoW Forever, which hides health and mana
   from addons. Those two checks now show as *unchecked* instead of blocking.
 - Fixed: the hidden leaderboard channel could take `/1` and push General and

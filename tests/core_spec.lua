@@ -1131,3 +1131,47 @@ test("MySpec falls back to C_SpecializationInfo and survives no specs at all", f
     C_SpecializationInfo = nil
     eq(env.ns.Comm.MySpec(), nil)
 end)
+
+---------------------------------------------------------------------------
+-- WoW Forever names: "First Last", realm only from GetNormalizedRealmName
+---------------------------------------------------------------------------
+
+local function foreverEnv(extra)
+    local units = { player = { name = "Duelio", surname = "Vodee", class = "PALADIN" } }
+    for k, v in pairs(extra or {}) do units[k] = v end
+    return loggedIn({ forever = { realm = "ClassicBetaPvP" }, units = units })
+end
+
+test("Forever: we are 'First Last' on the real realm, not First-Surname", function()
+    local env = foreverEnv()
+    eq(env.ns.me.name, "Duelio Vodee")
+    eq(env.ns.me.realm, "ClassicBetaPvP")
+    eq(env.ns.me.full, "Duelio Vodee-ClassicBetaPvP")
+    eq(env.ns.DisplayName(env.ns.me.full), "Duelio Vodee")
+end)
+
+test("Forever: a duel with surnames in the chat message is recorded", function()
+    local env = foreverEnv({ target = { name = "Bran", surname = "Drav", class = "ROGUE" } })
+    env.fire("DUEL_REQUESTED", "Bran Drav")
+    env.fire("CHAT_MSG_SYSTEM", "Duelio Vodee has defeated Bran Drav in a duel")
+    eq(#DuelEloCharDB.duels, 1)
+    local e = last(env)
+    eq(e.opp, "Bran Drav-ClassicBetaPvP")
+    eq(e.result, "W")
+    eq(e.class, "ROGUE", "class found through the target")
+end)
+
+test("Forever: our own channel broadcast isn't stored as a stranger", function()
+    local env = foreverEnv()
+    env.addonMsg("Duelio Vodee", "P~1500~10~PALADIN~6~4", "CHANNEL")
+    eq(DuelEloDB.players["Duelio Vodee-ClassicBetaPvP"], nil)
+    eq(DuelEloDB.players["Duelio Vodee-Vodee"], nil)
+    env.addonMsg("Bran Drav", "P~1650~30~ROGUE~20~10", "CHANNEL")
+    eq(DuelEloDB.players["Bran Drav-ClassicBetaPvP"].rating, 1650, "other players still are")
+end)
+
+test("Forever: /duel with the target uses the whole name", function()
+    local env = foreverEnv({ target = { name = "Bran", surname = "Drav", class = "ROGUE" } })
+    eq(env.ns.Duel.OpponentFromDuelArg(""), "Bran Drav-ClassicBetaPvP")
+    eq(env.ns.Duel.OpponentFromDuelArg("Bran Drav"), "Bran Drav-ClassicBetaPvP")
+end)

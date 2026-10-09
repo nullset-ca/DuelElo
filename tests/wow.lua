@@ -163,6 +163,26 @@ function M.new(opts)
         if u then return u.class, u.class end
     end
     function GetNormalizedRealmName() return env.units.player.realm end
+
+    -- opts.forever = { realm = "ClassicBetaPvP" }: names as the WoW Forever beta
+    -- reports them. Units carry `surname`; UnitFullName returns it where retail
+    -- returns the realm, GetPlayerInfoByGUID gives "First Last" and realm "".
+    GetPlayerInfoByGUID = nil
+    if opts.forever then
+        function UnitGUID(unit) return env.units[unit] and ("Player-4619-" .. env.units[unit].name) end
+        function UnitFullName(unit)
+            local u = env.units[unit]
+            if u then return u.name, u.surname end
+        end
+        function GetPlayerInfoByGUID(guid)
+            for _, u in pairs(env.units) do
+                if "Player-4619-" .. u.name == guid then
+                    return u.class, u.class, "Human", "Human", 2, u.name .. " " .. u.surname, ""
+                end
+            end
+        end
+        function GetNormalizedRealmName() return opts.forever.realm end
+    end
     time = os.time
     date = os.date
     print = function(s) env.printed[#env.printed + 1] = s end
