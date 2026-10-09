@@ -125,6 +125,8 @@ SlashCmdList.DUELELO = function(input)
         if ns.OpenOptions then ns.OpenOptions() end
     elseif cmd == "upload" then
         if ns.ShowUploadTab then ns.ShowUploadTab() end
+    elseif cmd == "setup" then
+        if ns.ShowSetup then ns.ShowSetup() end
     elseif cmd == "widget" then
         widgetCommand(arg, arg2)
     elseif cmd == "sound" then
@@ -142,9 +144,9 @@ SlashCmdList.DUELELO = function(input)
             settings.rankedPref = arg
         end
         ns.Print(L["Ranked duels: %s  (/duelelo ranked always|ask|never)"]:format(settings.rankedPref))
-    elseif cmd == "strict" then
+    elseif cmd == "cooldowns" or cmd == "strict" then  -- "strict" was the old name
         if arg == "on" or arg == "off" then settings.strict = arg == "on" end
-        ns.Print(L["Strict ranked (cooldowns ready on both sides): %s  (/duelelo strict on|off)"]:format(
+        ns.Print(L["Wait for cooldowns before ranked: %s  (/duelelo cooldowns on|off)"]:format(
             settings.strict and L["on"] or L["off"]))
     elseif cmd == "results" then
         settings.resultsScreen = not settings.resultsScreen
@@ -160,8 +162,9 @@ SlashCmdList.DUELELO = function(input)
         ns.Print(L["Ranked dueling for WoW Forever. Commands (everything is also in Settings > AddOns > DuelElo):"])
         ns.Print(L["  /duelelo — open your record, leaderboard and stats"])
         ns.Print(L["  /duelelo options — open the settings"])
+        ns.Print(L["  /duelelo setup — the setup guide (ranked duels, rank widget, uploading)"])
         ns.Print(L["  /duelelo ranked always|ask|never — ranked duel preference"])
-        ns.Print(L["  /duelelo strict on|off — only play ranked when both sides' cooldowns are ready"])
+        ns.Print(L["  /duelelo cooldowns on|off — ranked waits until both players' trinkets and long cooldowns are ready"])
         ns.Print(L["  /duelelo size 50-150 — results screen size, with a preview (drag it to move it)"])
         ns.Print(L["  /duelelo resetpos  |  /duelelo sound"])
         ns.Print(L["  /duelelo upload — create an upload code for the WoW Forever ladder"])

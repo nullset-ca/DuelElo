@@ -30,6 +30,8 @@ local function build()
     end
 
     header(L["DuelElo — ranked dueling for WoW Forever"])
+    button(L["Setup guide"], L["Run setup again"], function() if ns.ShowSetup then ns.ShowSetup() end end,
+        L["Walk through the first-time setup again."])
 
     -- Ranked
     header(L["Ranked duels"])
@@ -42,9 +44,9 @@ local function build()
         return c:GetData()
     end, L["When your opponent also has DuelElo: agree to ranked automatically, get asked, or always play casual."])
 
-    local strict = setting("strict", s, Settings.VarType.Boolean, L["Strict ranked"], false)
+    local strict = setting("strict", s, Settings.VarType.Boolean, L["Wait for cooldowns"], false)
     Settings.CreateCheckbox(category, strict,
-        L["Only agree to ranked when both players' long cooldowns and trinkets are ready. (Health, mana, combat and banned buffs are always required.)"])
+        L["Off: cooldowns and trinkets are shown, but don't stop a ranked duel. On: ranked waits until both players' trinkets and 1-minute-plus cooldowns are ready."])
 
     local nudges = setting("uploadNudges", s, Settings.VarType.Boolean, L["Upload reminders"], true)
     Settings.CreateCheckbox(category, nudges,

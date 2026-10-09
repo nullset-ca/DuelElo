@@ -33,7 +33,7 @@ Install it and duel. That's it — no setup.
 - **Fair play** — see *Ranked rules* below. Spot something shady? Report the duel
   from the results screen or your History.
 - **Rank widget** — a small, stream-friendly panel with your rank, recent results
-  and rating trend (Full / Compact / Minimal). `/duelelo widget`.
+  and rating trend (Full / Compact / Minimal). Off by default: `/duelelo widget show`.
 - **Lightweight** — no libraries, nothing runs in the background, no art to load.
 
 ## Using it
@@ -42,8 +42,9 @@ Install it and duel. That's it — no setup.
 |---|---|
 | `/duelelo` | Open your record, leaderboard and stats |
 | `/duelelo options` | Settings (also in *Settings → AddOns → DuelElo*) |
+| `/duelelo setup` | The setup guide (it also opens once after your first login) |
 | `/duelelo ranked always\|ask\|never` | How to answer ranked requests |
-| `/duelelo strict on\|off` | Only play ranked when both sides' cooldowns are ready |
+| `/duelelo cooldowns on\|off` | Wait for cooldowns: ranked only once both players' trinkets and long cooldowns are ready |
 | `/duelelo upload` | Create an upload code for the official ladder |
 | `/duelelo widget` | Rank widget: show, hide, lock, preset full / compact / minimal |
 | `/duelelo size 50-150` | Results screen size (shows a preview) |
@@ -75,8 +76,9 @@ Open tournament rules):
 - **Same level** (any level).
 - **Ready:** health and mana at least 95%, out of combat, no banned buffs (world
   buffs, Darkmoon fortunes, campfire and objective buffs). Cooldowns and trinkets
-  are shown to both players but never block — turn on *Strict* if you want both
-  sides fully ready.
+  are shown to both players but never block — turn on *Wait for cooldowns* if
+  you want both sides fully ready. Where the game hides health or mana from addons (WoW
+  Forever does), they show as *unchecked* and don't block: check each other.
 - **Fair pairings:** repeat ranked duels against the same opponent count ½, then
   ¼, then not at all within 7 days; your own characters can't play each other.
 - **Both players need DuelElo v0.5 or newer.** Older versions can still duel
@@ -97,6 +99,27 @@ ratings you haven't seen first-hand (you dueled that player) with `*`.
 **Something looks off?** DuelElo is made for WoW Forever. If anything misbehaves,
 tell us on [Discord](https://discord.gg/8Jyz7g4p64) or
 [open an issue](https://github.com/nullset-ca/DuelElo/issues/new/choose).
+
+## Help us test
+
+DuelElo is new and WoW Forever is still in beta, so test builds come first.
+They're on **[GitHub Releases](https://github.com/nullset-ca/DuelElo/releases)**
+(marked *Pre-release*):
+
+- **DuelElo test build** (`test-…` releases): the addon itself. Unzip it into
+  your `Interface/AddOns` folder so you have `AddOns/DuelElo/DuelElo.toc`
+  (on the Forever beta: `World of Warcraft/_classic_beta_/Interface/AddOns`),
+  then fully restart the game.
+- **DuelElo Probe** (`probe-…` releases): a small diagnostic addon that logs
+  what the game client tells addons, so we can fix things for Forever. Type
+  `/probe v2` in a city, with another player targeted, and where you duel.
+  Its log is saved in `WTF/Account/<account>/SavedVariables/DuelEloProbe.lua`
+  after `/reload` or logging out.
+
+Then duel (another tester is best, so you can try ranked) and tell us what
+happened in the [Discord](https://discord.gg/8Jyz7g4p64) (`#help-us-test`). Never
+share `DuelElo.lua` from your SavedVariables: it holds your characters' secret
+keys.
 
 ## Community
 

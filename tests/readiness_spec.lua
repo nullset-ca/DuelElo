@@ -61,13 +61,19 @@ test("no mana pool means the power check passes", function()
     eq(R.Evaluate(with({ mana = false })), 0)
 end)
 
-test("unreadable inputs fail their check and are marked unknown", function()
+test("unreadable inputs are marked unknown; all but health and mana fail", function()
     local mask, _, unknown = R.Evaluate({})
-    eq(mask, R.ALL_BITS)
+    eq(mask, R.ALL_BITS - B.HEALTH - B.POWER)
     for _, b in pairs(B) do ok(unknown[b], "bit " .. b) end
     local m2, _, u2 = R.Evaluate(with({ health = "?" }))
-    eq(m2, B.HEALTH)
+    eq(m2, 0, "hidden health doesn't block (secret on Forever)")
     eq(u2, { [B.HEALTH] = true })
+    eq(R.Unchecked(m2, u2), { "health" })
+    local noMana = with({})
+    noMana.mana = nil
+    local m3, _, u3 = R.Evaluate(noMana)
+    eq(m3, 0)
+    eq(R.Unchecked(m3, u3), { "mana" })
 end)
 
 test("baseline vs informational split", function()
@@ -181,8 +187,19 @@ test("adapter: secret values never throw and mark the check unknown", function()
     env.vitals.health = "secret-health"
     env.secrets["secret-health"] = true
     local mask, _, unknown = a.EvaluateReadiness()
-    eq(mask, B.HEALTH)
+    eq(mask, 0, "hidden health is unchecked, not a failure")
     ok(unknown[B.HEALTH])
+end)
+
+test("adapter: UnitHealthPercent stands in for a hidden UnitHealth", function()
+    local env, a = client()
+    env.vitals.health = "secret-health"
+    env.secrets["secret-health"] = true
+    UnitHealthPercent = function() return 50 end  -- 0..100
+    local mask, _, unknown = a.EvaluateReadiness()
+    UnitHealthPercent = nil
+    eq(mask, B.HEALTH, "50% is too low")
+    eq(unknown[B.HEALTH], nil)
 end)
 
 test("adapter: secret cooldown info marks cooldowns unknown", function()
@@ -209,7 +226,7 @@ test("adapter: missing or erroring APIs never throw", function()
     C_SpellBook, C_UnitAuras, UnitBuff = nil, nil, nil
     UnitHealth = function() error("boom") end
     local mask, _, unknown = a.EvaluateReadiness()
-    eq(mask, B.HEALTH + B.COOLDOWNS + B.BANNED)
+    eq(mask, B.COOLDOWNS + B.BANNED)
     ok(unknown[B.HEALTH] and unknown[B.COOLDOWNS] and unknown[B.BANNED])
 end)
 

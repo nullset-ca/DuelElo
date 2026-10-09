@@ -325,7 +325,7 @@ function ns.RefreshWidget()
     local color = m.color or GREY
     f:SetBackdropBorderColor(color[1], color[2], color[3], 1)
     ns.SetEmblem(f.emblem, m.tierKey)
-    f.label:SetText(m.placements and L["PLACEMENTS %d/%d"]:format(m.placements.done, m.placements.total)
+    f.label:SetText(m.placements and L["Placements %d / %d"]:format(m.placements.done, m.placements.total)
         or m.label:upper())
     f.label:SetTextColor(color[1], color[2], color[3])
     f.rating:SetText(m.placements and "" or m.rating)

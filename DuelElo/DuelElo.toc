@@ -49,4 +49,5 @@ UI\Community.lua
 UI\Widget.lua
 UI\Report.lua
 UI\Upload.lua
+UI\Setup.lua
 UI\Tooltip.lua

@@ -431,7 +431,7 @@ end
 
 local function build()
     local f = CreateFrame("Frame", "DuelEloMainFrame", UIParent, "BasicFrameTemplateWithInset")
-    f:SetSize(440, 480)
+    f:SetSize(440, 508)
     f:SetPoint("CENTER")
     f:SetClampedToScreen(true)
     f:SetMovable(true)
@@ -465,7 +465,7 @@ local function build()
     for i, builder in ipairs({ buildHistory, buildLeaderboard, buildStats, ns.BuildUploadPage }) do
         local page = CreateFrame("Frame", nil, f)
         page:SetPoint("TOPLEFT", 10, -90)
-        page:SetPoint("BOTTOMRIGHT", -8, 8)
+        page:SetPoint("BOTTOMRIGHT", -8, 36)  -- footer below for Discord / Options
         builder(page)
         f.pages[i] = page
     end
@@ -490,7 +490,8 @@ local function build()
 
     local options = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
     options:SetSize(72, 22)
-    options:SetPoint("TOPRIGHT", f, "BOTTOMRIGHT", -6, -2)
+    -- Inside the frame: the tabs hang below it and need its full width.
+    options:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -10, 8)
     options:SetText(L["Options"])
     options:SetScript("OnClick", function()
         f:Hide()
@@ -509,6 +510,12 @@ local function build()
         GameTooltip:Show()
     end)
     discord:SetScript("OnLeave", function() GameTooltip:Hide() end)
+
+    local setup = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
+    setup:SetSize(72, 22)
+    setup:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 10, 8)
+    setup:SetText(L["Setup"])
+    setup:SetScript("OnClick", function() if ns.ShowSetup then ns.ShowSetup() end end)
 
     f:Hide()
     frame = f

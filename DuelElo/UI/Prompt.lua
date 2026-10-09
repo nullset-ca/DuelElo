@@ -22,7 +22,7 @@ local REASONS = {
     L = L["Different levels — casual only"],
     A = L["Same account — casual only"],
     B = L["Ladder ban — casual only"],
-    U = L["%s is waiting for cooldowns (strict)"],
+    U = L["%s waits for cooldowns before ranked"],
 }
 -- Reasons that come from the rules rather than a choice: shown for our side too.
 local RULE_REASONS = { F = true, L = true, A = true, B = true }
@@ -30,7 +30,6 @@ local RULE_REASONS = { F = true, L = true, A = true, B = true }
 -- "Ready", or baseline problems in red and cooldown info in grey.
 local function readyText(mask, counts, unknown)
     if not mask then return GREY .. "…|r" end
-    if mask == 0 then return GREEN .. L["Ready"] .. "|r" end
     local baseline, info = ns.Readiness.Problems(mask, counts, unknown)
     local parts = {}
     if #baseline > 0 then
@@ -38,7 +37,11 @@ local function readyText(mask, counts, unknown)
     else
         parts[1] = GREEN .. L["Ready"] .. "|r"
     end
-    if #info > 0 then parts[#parts + 1] = GREY .. L["%s not ready"]:format(table.concat(info, ", ")) .. "|r" end
+    if #info > 0 then parts[#parts + 1] = GREY .. L["%s recharging"]:format(table.concat(info, ", ")) .. "|r" end
+    local unchecked = ns.Readiness.Unchecked(mask, unknown)
+    if #unchecked > 0 then
+        parts[#parts + 1] = GREY .. L["%s unchecked"]:format(table.concat(unchecked, ", ")) .. "|r"
+    end
     return table.concat(parts, GREY .. "  ·  |r")
 end
 
@@ -64,8 +67,25 @@ local function build()
 
     f.title = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     f.title:SetPoint("TOPLEFT", f.emblem, "TOPRIGHT", 8, -2)
-    f.title:SetPoint("RIGHT", -10, 0)
+    f.title:SetPoint("RIGHT", -34, 0)
     f.title:SetJustifyH("LEFT")
+
+    -- "?" with the ranked rules, so "Not ready: health" never needs guessing.
+    f.help = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
+    f.help:SetSize(22, 20)
+    f.help:SetPoint("TOPRIGHT", -8, -8)
+    f.help:SetText("?")
+    f.help:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:AddLine(L["Ranked rules"])
+        GameTooltip:AddLine(L["Both players agree before the duel starts."], 1, 1, 1, true)
+        GameTooltip:AddLine(L["Both need: the same level, at least 95% health and mana, out of combat, no banned buffs."], 1, 1, 1, true)
+        GameTooltip:AddLine(L["Cooldowns and trinkets are shown for information. They only block ranked if a player turned on Wait for cooldowns."], 0.7, 0.7, 0.7, true)
+        GameTooltip:AddLine(L["Otherwise it's a casual duel: recorded, no rating change."], 0.7, 0.7, 0.7, true)
+        GameTooltip:AddLine(L["If the game hides health or mana from addons, they show as unchecked: check each other before you start."], 0.7, 0.7, 0.7, true)
+        GameTooltip:Show()
+    end)
+    f.help:SetScript("OnLeave", function() GameTooltip:Hide() end)
 
     f.sub = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     f.sub:SetPoint("TOPLEFT", f.title, "BOTTOMLEFT", 0, -4)

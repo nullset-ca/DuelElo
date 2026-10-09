@@ -14,11 +14,17 @@ local SOURCE_RANK = { channel = 1, guild = 2, met = 3 }
 local Comm = { PREFIX = COMM_PREFIX }
 ns.Comm = Comm
 
+-- Specialization id, from the old globals or C_SpecializationInfo (the
+-- Forever client has only the latter, if anything), or nil.
 function Comm.MySpec()
-    if not (GetSpecialization and GetSpecializationInfo) then return nil end
-    local index = GetSpecialization()
-    local id = index and GetSpecializationInfo(index)
-    return type(id) == "number" and id or nil
+    local si = C_SpecializationInfo
+    local getSpec = GetSpecialization or (si and si.GetSpecialization)
+    local getInfo = GetSpecializationInfo or (si and si.GetSpecializationInfo)
+    if not (getSpec and getInfo) then return nil end
+    local ok, index = pcall(getSpec)
+    if not ok or type(index) ~= "number" or ns.IsSecret(index) then return nil end
+    local ok2, id = pcall(getInfo, index)
+    return ok2 and type(id) == "number" and not ns.IsSecret(id) and id or nil
 end
 
 function Comm.MyItemLevel()

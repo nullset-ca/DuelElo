@@ -5,7 +5,7 @@ local _, ns = ...
 local L = ns.L
 
 local SITE = "duelelo.com/upload"
-local WARNING = L["This code contains your character's secret key. Paste it only on %s or in the DuelElo bot's /upload box, never in chat. Ctrl+C to copy."]:format(SITE)
+local WARNING = L["Your code is hidden, so this is safe on stream. Press Ctrl+C to copy it, then paste it on %s (hidden there too). It contains your character's secret key: never paste it in chat."]:format(SITE)
 
 local nudged = false  -- once per session
 
@@ -68,7 +68,7 @@ function ns.BuildUploadPage(page)
     make:SetText(L["Create upload code"])
     make:SetScript("OnClick", function()
         local code = ns.MakeUploadCode(full:GetChecked())
-        if ns.ShowCopyBox then ns.ShowCopyBox(L["DuelElo upload code"], WARNING, code) end
+        if ns.ShowCopyBox then ns.ShowCopyBox(L["DuelElo upload code"], WARNING, code, true) end
     end)
 
     local site = page:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")

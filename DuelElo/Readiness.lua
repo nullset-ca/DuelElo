@@ -54,10 +54,14 @@ function Readiness.Evaluate(inputs)
 
     if inputs.inCombat == nil then fail(B.COMBAT, true) elseif inputs.inCombat then fail(B.COMBAT) end
 
-    if type(inputs.health) ~= "number" then fail(B.HEALTH, true)
+    -- Health and mana that the client hides from addons (secret values on
+    -- WoW Forever, even out of combat) can't be checked: they're marked unknown
+    -- and shown as unchecked, but don't block. Failing them would make ranked
+    -- impossible, and a modified addon could skip the check anyway.
+    if type(inputs.health) ~= "number" then unknown[B.HEALTH] = true
     elseif inputs.health < Readiness.HEALTH_MIN then fail(B.HEALTH) end
 
-    if inputs.mana == nil then fail(B.POWER, true)
+    if inputs.mana == nil then unknown[B.POWER] = true
     elseif inputs.mana ~= false and inputs.mana < Readiness.MANA_MIN then fail(B.POWER) end
 
     local counts = { cooldowns = inputs.cooldowns, trinkets = inputs.trinkets, banned = inputs.banned }
@@ -104,6 +108,15 @@ function Readiness.Problems(mask, counts, unknown)
         end
     end
     return baseline, info
+end
+
+-- Labels of checks that couldn't be read and didn't block ({"health", "mana"}).
+function Readiness.Unchecked(mask, unknown)
+    local out = {}
+    for _, l in ipairs(LABELS) do
+        if unknown and unknown[l[1]] and not Readiness.Has(mask or 0, l[1]) then out[#out + 1] = l[2] end
+    end
+    return out
 end
 
 -- "Ready" or "Not ready: health, 2 cooldowns" (baseline problems first).

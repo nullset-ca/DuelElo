@@ -16,7 +16,7 @@ Model.OPACITY_MIN, Model.OPACITY_MAX = 0.3, 1
 Model.LAST_N = 10  -- games in the "last 10 ranked games" period
 
 Model.DEFAULTS = {
-    shown = true,          -- on by default: visible proof the addon works
+    shown = false,         -- opt-in: /duelelo widget show or the Options panel
     preset = "compact",
     trend = "number",      -- number | sparkline | both | none
     period = "session",    -- session | today | last10

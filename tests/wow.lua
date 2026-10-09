@@ -67,10 +67,38 @@ function M.new(opts)
     end
 
     -- Custom channels, chat frames, and the bits of player info we record.
-    env.channels, env.filters, env.removedFrom = {}, {}, {}
-    function JoinTemporaryChannel(name) env.channels[name] = 5 end
+    -- env.channels: name -> channel number, like /1 General. A new channel takes
+    -- the lowest free number, as in game; opts.channels replaces the defaults.
+    env.channels = opts.channels or { General = 1, Trade = 2, LocalDefense = 3, LookingForGroup = 4 }
+    env.filters, env.removedFrom = {}, {}
+    function JoinTemporaryChannel(name)
+        if env.channels[name] then return end
+        local used = {}
+        for _, id in pairs(env.channels) do used[id] = true end
+        local id = 1
+        while used[id] do id = id + 1 end
+        env.channels[name] = id
+    end
     function LeaveChannelByName(name) env.channels[name] = nil end
     function GetChannelName(name) return env.channels[name] or 0 end
+    function GetChannelList()
+        local ids = {}
+        for name, id in pairs(env.channels) do ids[#ids + 1] = { id, name } end
+        table.sort(ids, function(a, b) return a[1] < b[1] end)
+        local out = {}
+        for _, c in ipairs(ids) do out[#out + 1] = c[1]; out[#out + 1] = c[2]; out[#out + 1] = false end
+        return unpack(out)
+    end
+    C_ChatInfo.SwapChatChannelsByChannelIndex = function(a, b)
+        for name, id in pairs(env.channels) do
+            if id == a then env.channels[name] = b elseif id == b then env.channels[name] = a end
+        end
+    end
+    -- The game joining a channel by itself (zoning, or rejoining at login).
+    function env.gameJoins(name)
+        JoinTemporaryChannel(name)
+        env.fire("CHAT_MSG_CHANNEL_NOTICE", "YOU_CHANGED", "", "", env.channels[name] .. ". " .. name)
+    end
     NUM_CHAT_WINDOWS = 2
     ChatFrame1, ChatFrame2 = { id = 1 }, { id = 2 }
     function ChatFrame_RemoveChannel(cf, name) env.removedFrom[#env.removedFrom + 1] = cf.id .. ":" .. name end

@@ -443,6 +443,43 @@ test("channel: joined after login, hidden from chat, stats announced", function(
     eq(p.target, 5)
 end)
 
+test("channel: never takes /1 when the game rejoined it before General", function()
+    -- The game rejoins custom channels at login, sometimes before General and Trade.
+    local env = loggedIn({ channels = { DuelEloLadder = 1 } })
+    env.gameJoins("General")
+    env.gameJoins("Trade")
+    settle(env)
+    eq(env.channels, { General = 1, Trade = 2, DuelEloLadder = 3 })
+    env.gameJoins("LocalDefense")
+    settle(env)
+    eq(env.channels.LocalDefense, 3)
+    eq(env.channels.DuelEloLadder, 4)
+    env.ns.Comm.ShareStats(nil)
+    eq(env.lastSent("P~").target, 4, "announces on the channel's current number")
+end)
+
+test("channel: joining with gaps in the numbers still goes last", function()
+    local env = loggedIn({ channels = { General = 1, LookingForGroup = 4 } })
+    settle(env)
+    eq(env.channels.General, 1)
+    eq(env.channels.DuelEloLadder, 4, "behind every other channel")
+end)
+
+test("channel: left at logout so the game can't rejoin it early", function()
+    local env = loggedIn()
+    settle(env)
+    eq(env.channels.DuelEloLadder, 5)
+    env.fire("PLAYER_LOGOUT")
+    eq(env.channels.DuelEloLadder, nil)
+end)
+
+test("channel: opted-out players leave a channel the game rejoined", function()
+    local env = loggedIn({ db = { schema = 2, settings = { shareChannel = false } },
+        channels = { DuelEloLadder = 1, General = 2 } })
+    settle(env)
+    eq(env.channels.DuelEloLadder, nil)
+end)
+
 test("channel: join/leave notices for our channel are filtered", function()
     local env = loggedIn()
     local filter = env.filters.CHAT_MSG_CHANNEL_NOTICE
@@ -726,6 +763,15 @@ test("strict on/off command and setting", function()
     eq(DuelEloDB.settings.strict, false)
 end)
 
+test("/duelelo cooldowns is the new name for strict", function()
+    local env = loggedIn()
+    env.slash("cooldowns on")
+    eq(DuelEloDB.settings.strict, true)
+    ok(env.lastPrint():find("Wait for cooldowns", 1, true))
+    env.slash("cooldowns off")
+    eq(DuelEloDB.settings.strict, false)
+end)
+
 test("strict: our cooldown down refuses consent", function()
     local env = loggedIn()
     env.slash("strict on")
@@ -837,7 +883,7 @@ end)
 test("widget settings: defaults on a fresh install", function()
     loggedIn()
     local w = DuelEloDB.settings.widget
-    eq({ w.shown, w.preset, w.trend, w.period, w.recent, w.scale, w.locked }, { true, "compact", "number", "session", 5, 1, false })
+    eq({ w.shown, w.preset, w.trend, w.period, w.recent, w.scale, w.locked }, { false, "compact", "number", "session", 5, 1, false })
 end)
 
 test("widget commands change and persist settings", function()
@@ -1074,4 +1120,14 @@ test("/duel: no name means the target, a name is a player name (with or without 
     eq(Duel.OpponentFromDuelArg("target"), "Thrall-Area52", "a unit token still works (right-click menu)")
     eq(Duel.OpponentFromDuelArg("Jaina"), "Jaina-Sargeras", "/duel Name: same realm")
     eq(Duel.OpponentFromDuelArg("Jaina-Area52"), "Jaina-Area52")
+end)
+
+test("MySpec falls back to C_SpecializationInfo and survives no specs at all", function()
+    local env = loggedIn()
+    GetSpecialization, GetSpecializationInfo = nil, nil
+    C_SpecializationInfo = { GetSpecialization = function() return 2 end,
+        GetSpecializationInfo = function(i) return i == 2 and 254 or nil end }
+    eq(env.ns.Comm.MySpec(), 254)
+    C_SpecializationInfo = nil
+    eq(env.ns.Comm.MySpec(), nil)
 end)

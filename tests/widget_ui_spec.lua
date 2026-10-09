@@ -2,11 +2,13 @@
 local Wow = require("wow")
 local Stub = require("ui_stub")
 
-local function widgetEnv(opts)
+-- The widget is opt-in; most tests turn it on so the drawing code runs.
+local function widgetEnv(opts, hidden)
     DuelEloWidget = nil
     local env = Wow.new(opts)
     Stub.install(env)
     env.login()
+    if not hidden then DuelEloDB.settings.widget.shown = true end
     env.ns.SetEmblem = function() end
     Stub.load(env, "UI/Widget.lua")
     env.ns.Fire("READY")
@@ -53,9 +55,11 @@ test("widget renders placements, ranked, official and demo data", function()
 end)
 
 test("hide and show follow the setting", function()
-    local env = widgetEnv()
+    local env = widgetEnv(nil, true)
+    ok(not (DuelEloWidget and DuelEloWidget:IsShown()), "hidden by default")
+    env.slash("widget show")
     local f = DuelEloWidget
-    ok(f:IsShown(), "shown by default")
+    eq(f:IsShown(), true)
     env.slash("widget hide")
     eq(f:IsShown(), false)
     env.slash("widget show")

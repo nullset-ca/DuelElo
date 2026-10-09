@@ -1,13 +1,15 @@
 -- UI/Community.lua: a small window with a selected, read-only text box, for
--- links (and later export codes) the player copies out of the game.
+-- links and upload codes the player copies out of the game. Secret values
+-- (upload codes) stay hidden unless the player asks, so it's safe on stream.
 -- Built lazily on first use.
 local _, ns = ...
+local L = ns.L
 
 local box
 
 local function build()
     local f = CreateFrame("Frame", "DuelEloCopyFrame", UIParent, "BasicFrameTemplateWithInset")
-    f:SetSize(380, 160)
+    f:SetSize(380, 176)
     f:SetPoint("CENTER", 0, 160)
     f:SetFrameStrata("DIALOG")
     f:SetClampedToScreen(true)
@@ -41,9 +43,42 @@ local function build()
         end
     end)
     edit:SetScript("OnEditFocusGained", function(self) self:HighlightText() end)
+    -- Ctrl+C (Cmd+C on a Mac) feedback; not every client has OnKeyDown on edit boxes.
+    pcall(edit.SetScript, edit, "OnKeyDown", function(_, key)
+        local mod = (IsControlKeyDown and IsControlKeyDown()) or (IsMetaKeyDown and IsMetaKeyDown())
+        if key == "C" and mod then
+            f.copied = true
+            f.mask:SetText(L["Copied!"])
+        end
+    end)
     edit:SetScript("OnEscapePressed", function() f:Hide() end)
     edit:SetScript("OnEnterPressed", function() f:Hide() end)
     f.edit = edit
+
+    -- Stands in for the text while a secret value is hidden. The edit box is
+    -- only made invisible (alpha 0): it keeps focus and the selection, so
+    -- Ctrl+C still copies the real value.
+    f.mask = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    f.mask:SetPoint("CENTER", edit, "CENTER")
+
+    f.reveal = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
+    f.reveal:SetSize(100, 22)
+    f.reveal:SetPoint("BOTTOMLEFT", 16, 14)
+    f.reveal:SetScript("OnClick", function()
+        f.revealed = not f.revealed
+        f.Redraw()
+        edit:SetFocus()
+        edit:HighlightText()
+    end)
+
+    f.Redraw = function()
+        local hidden = f.secret and not f.revealed
+        edit:SetAlpha(hidden and 0 or 1)
+        f.mask:SetShown(hidden)
+        f.mask:SetText(f.copied and L["Copied!"] or L["Code hidden · Ctrl+C copies it"])
+        f.reveal:SetShown(f.secret)
+        f.reveal:SetText(f.revealed and L["Hide code"] or L["Show code"])
+    end
 
     local close = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
     close:SetSize(84, 22)
@@ -54,8 +89,11 @@ local function build()
     box = f
 end
 
-function ns.ShowCopyBox(title, text, value)
+-- secret: hide the value on screen (it still copies) until "Show code".
+function ns.ShowCopyBox(title, text, value, secret)
     if not box then build() end
+    box.secret, box.revealed, box.copied = secret and true or false, false, false
+    box.Redraw()
     box.title:SetText(title)
     box.text:SetText(text)
     box.value = value

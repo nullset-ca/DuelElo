@@ -9,7 +9,11 @@ ns.Channel = Channel
 
 local channelId  -- set once we've joined the hidden channel
 
+-- The number changes when channels are reordered, so read it at send time.
 function Channel.Id()
+    if not channelId then return nil end
+    local id = GetChannelName(CHANNEL_NAME)
+    if type(id) == "number" and id > 0 and not ns.IsSecret(id) then channelId = id end
     return channelId
 end
 
@@ -36,6 +40,50 @@ if ChatFrame_AddMessageEventFilter then
     ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL_NOTICE_USER", isOurChannelNotice)
 end
 
+-- Keep our channel after every other channel, so it never takes /1 or shifts
+-- General and Trade: a new channel gets the lowest free number, and the game
+-- rejoins custom channels at login, sometimes before General.
+local function moveToEnd()
+    local swap = C_ChatInfo and C_ChatInfo.SwapChatChannelsByChannelIndex
+    if not (swap and GetChannelList and GetChannelName) then return end
+    for _ = 1, 20 do
+        local mine = GetChannelName(CHANNEL_NAME)
+        if type(mine) ~= "number" or mine <= 0 or ns.IsSecret(mine) then return end
+        local list, after = { GetChannelList() }, nil
+        for i = 1, #list, 3 do
+            local id = list[i]
+            if type(id) == "number" and not ns.IsSecret(id) and id > mine and (not after or id < after) then
+                after = id
+            end
+        end
+        if not after or not pcall(swap, mine, after) then return end
+    end
+end
+Channel.MoveToEnd = moveToEnd
+
+-- Another channel joined (zoning into a city, login): move ours behind it.
+local tidyPending = false
+local watcher = CreateFrame("Frame")
+watcher:RegisterEvent("CHAT_MSG_CHANNEL_NOTICE")
+watcher:RegisterEvent("PLAYER_LOGOUT")
+watcher:SetScript("OnEvent", function(_, event, ...)
+    if event == "PLAYER_LOGOUT" then
+        -- Leave so the game doesn't rejoin it at the next login before General.
+        if GetChannelName and LeaveChannelByName and (GetChannelName(CHANNEL_NAME) or 0) ~= 0 then
+            pcall(LeaveChannelByName, CHANNEL_NAME)
+        end
+        return
+    end
+    if tidyPending or isOurChannelNotice(nil, event, ...) then return end
+    if (GetChannelName(CHANNEL_NAME) or 0) == 0 then return end
+    tidyPending = true
+    C_Timer.After(1, function()
+        tidyPending = false
+        moveToEnd()
+        hideChannel()
+    end)
+end)
+
 local function scheduleChannelShare()
     C_Timer.After(CHANNEL_SHARE_EVERY + math.random(-300, 300), function()
         ns.Comm.ShareStats(nil)
@@ -44,8 +92,14 @@ local function scheduleChannelShare()
 end
 
 function Channel.Join()
-    if not ns.account.settings.shareChannel or not JoinTemporaryChannel or not GetChannelName then return end
+    if not JoinTemporaryChannel or not GetChannelName then return end
+    if not ns.account.settings.shareChannel then
+        -- opted out, but the game may have rejoined it from an older session
+        if (GetChannelName(CHANNEL_NAME) or 0) ~= 0 and LeaveChannelByName then pcall(LeaveChannelByName, CHANNEL_NAME) end
+        return
+    end
     pcall(JoinTemporaryChannel, CHANNEL_NAME)
+    moveToEnd()
     hideChannel()
     local id = GetChannelName(CHANNEL_NAME)
     if type(id) ~= "number" or id <= 0 then

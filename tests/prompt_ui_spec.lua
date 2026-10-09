@@ -55,3 +55,14 @@ test("prompt follows a live handshake", function()
     AcceptDuel()
     ok(true)
 end)
+
+test("the ? button explains the ranked rules", function()
+    local env = promptEnv()
+    env.ns.Fire("SESSION_CHANGED", { opp = "Thrall-Area52", role = "D", peer = PEER, status = "pending" })
+    local lines = {}
+    GameTooltip.AddLine = function(_, text) lines[#lines + 1] = text end
+    DuelEloPrompt.help.scripts.OnEnter(DuelEloPrompt.help)
+    local all = table.concat(lines, "\n")
+    ok(all:find("95%", 1, true), "health and mana")
+    ok(all:find("Wait for cooldowns", 1, true), "what the cooldown option does")
+end)

@@ -44,7 +44,7 @@ end
 local specs = { "parse_spec", "elo_spec", "data_spec", "leaderboard_spec", "session_spec", "core_spec",
     "readiness_spec", "rules_spec",
     "glicko_spec", "widget_model_spec", "widget_ui_spec",
-    "prompt_ui_spec", "options_ui_spec", "report_ui_spec", "export_spec", "ladder_spec", "locale_spec", "crypto_spec",
+    "prompt_ui_spec", "options_ui_spec", "report_ui_spec", "setup_ui_spec", "copybox_ui_spec", "export_spec", "ladder_spec", "locale_spec", "crypto_spec",
     "keys_spec", "statement_spec", "codec_spec", "loadout_spec" }
 for _, name in ipairs(specs) do
     currentFile = name

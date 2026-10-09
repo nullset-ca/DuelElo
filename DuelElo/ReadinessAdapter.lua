@@ -1,6 +1,6 @@
 -- ReadinessAdapter.lua: reads the client into Readiness inputs. Every read is
 -- wrapped so a missing API, an error or a secret value leaves that input nil
--- ("couldn't read it", which Readiness counts as failed) instead of erroring.
+-- ("couldn't read it", see Readiness.Evaluate) instead of erroring.
 local _, ns = ...
 local Readiness = ns.Readiness
 
@@ -27,10 +27,16 @@ local function readCombat()
     return v and true or false
 end
 
+-- Fraction 0..1 from a percent API that may answer 0..1 or 0..100.
+local function fraction(v)
+    if type(v) ~= "number" then return nil end
+    return v > 1 and v / 100 or v
+end
+
 local function readHealth()
     local cur, max = safe(UnitHealth, "player"), safe(UnitHealthMax, "player")
-    if type(cur) ~= "number" or type(max) ~= "number" or max <= 0 then return nil end
-    return cur / max
+    if type(cur) == "number" and type(max) == "number" and max > 0 then return cur / max end
+    return fraction(safe(UnitHealthPercent, "player"))  -- newer clients; may be secret too
 end
 
 -- Only mana counts (rage/energy/runic power start low by design). Any
@@ -40,8 +46,8 @@ local function readMana()
     if type(max) ~= "number" then return nil end
     if max <= 0 then return false end
     local cur = safe(UnitPower, "player", MANA)
-    if type(cur) ~= "number" then return nil end
-    return cur / max
+    if type(cur) == "number" then return cur / max end
+    return fraction(safe(UnitPowerPercent, "player", MANA))
 end
 
 -- Spellbook spells with a long base cooldown, rebuilt when the spellbook changes.

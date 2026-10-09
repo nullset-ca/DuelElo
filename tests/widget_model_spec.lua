@@ -178,13 +178,13 @@ test("Validate clamps scale and opacity and fixes unknown values", function()
     eq(w.trend, "number")
     eq(w.period, "session")
     eq(w.recent, 5)
-    eq(w.shown, true)
+    eq(w.shown, false, "junk falls back to the default (hidden)")
     eq(M.Validate({ scale = 0.1 }).scale, M.SCALE_MIN)
     eq(M.Validate({ scale = "x" }).scale, 1)
     local good = M.Validate({ scale = 1.5, opacity = 0.6, preset = "full", trend = "both", period = "today",
-        recent = 10, shown = false })
+        recent = 10, shown = true })
     eq({ good.scale, good.opacity, good.preset, good.trend, good.period, good.recent, good.shown },
-        { 1.5, 0.6, "full", "both", "today", 10, false })
+        { 1.5, 0.6, "full", "both", "today", 10, true })
 end)
 
 test("TrendText", function()

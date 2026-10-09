@@ -249,6 +249,29 @@ local function probeV2()
         select(2, call(GetServerTime)), safe(time())))
     log(("V2 LEVEL UnitLevel=%s GetMaxLevelForPlayerExpansion=%s"):format(select(2, call(UnitLevel, "player")),
         select(2, call(GetMaxLevelForPlayerExpansion))))
+    -- Forever names have surnames ("First Last"); log every way the client
+    -- spells a name, for the player and (if any) the target.
+    for _, unit in ipairs({ "player", "target" }) do
+        if UnitExists and UnitExists(unit) then
+            local n1, r1 = UnitName(unit)
+            local n2, r2 = UnitFullName(unit)
+            local guid = UnitGUID and UnitGUID(unit)
+            local gi = guid and GetPlayerInfoByGUID and { pcall(GetPlayerInfoByGUID, guid) } or {}
+            log(("V2 NAMES %s UnitName=[%s][%s] UnitFullName=[%s][%s] GetUnitName(true)=[%s] GUID=%s byGUID name=[%s] realm=[%s]")
+                :format(unit, safe(n1), safe(r1), safe(n2), safe(r2),
+                    safe(GetUnitName and GetUnitName(unit, true)), safe(guid), safe(gi[7]), safe(gi[8])))
+        end
+    end
+    log(("V2 REALM GetRealmName=[%s] GetNormalizedRealmName=[%s] GetCurrentRegion=%s GetCurrentRegionName=%s")
+        :format(safe(GetRealmName and GetRealmName()), safe(GetNormalizedRealmName and GetNormalizedRealmName()),
+            safe(GetCurrentRegion and GetCurrentRegion()), safe(GetCurrentRegionName and GetCurrentRegionName())))
+    log(("V2 PERCENT UnitHealthPercent=%s UnitPowerPercent=%s"):format(
+        select(2, call(UnitHealthPercent, "player")), select(2, call(UnitPowerPercent, "player", 0))))
+    local chans = { pcall(function() return GetChannelList() end) }
+    local chanText = {}
+    for i = 2, #chans, 3 do chanText[#chanText + 1] = safe(chans[i]) .. "." .. safe(chans[i + 1]) end
+    log(("V2 CHANNELS swap=%s list: %s"):format(
+        exists(C_ChatInfo and C_ChatInfo.SwapChatChannelsByChannelIndex), table.concat(chanText, " ")))
     log(("V2 WITNESS winner messages for other players' duels this session: %d"):format(witnessSeen))
 
     -- Forever vs retail data the site shows: class roster, specs, map ids
@@ -265,6 +288,14 @@ local function probeV2()
     local specInfo = "n/a"
     if okS and type(index) == "number" then specInfo = select(2, call(GetSpecializationInfo, index)) end
     log(("V2 SPEC GetSpecialization=%s GetSpecializationInfo=%s"):format(sText, specInfo))
+    local si = C_SpecializationInfo
+    local okS, siText, siIndex = call(si and si.GetSpecialization)
+    log(("V2 SPEC C_SpecializationInfo.GetSpecialization=%s GetSpecializationInfo=%s (specs unlock at level 10 on retail)"):format(
+        siText, okS and type(siIndex) == "number" and select(2, call(si.GetSpecializationInfo, siIndex)) or "n/a"))
+    local okC, cText, config = call(C_ClassTalents and C_ClassTalents.GetActiveConfigID)
+    local okI, _, import = call(okC and type(config) == "number" and C_Traits and C_Traits.GenerateImportString, config)
+    log(("V2 TRAITS GetActiveConfigID=%s importString=%s"):format(cText,
+        okI and type(import) == "string" and (#import .. " chars: " .. import:sub(1, 40)) or "n/a"))
     local mapId = C_Map and select(3, call(C_Map.GetBestMapForUnit, "player"))
     local mapInfo = C_Map and type(mapId) == "number" and select(3, call(C_Map.GetMapInfo, mapId))
     log(("V2 MAP GetBestMapForUnit=%s name=%s (log this in each capital and duel spot)"):format(

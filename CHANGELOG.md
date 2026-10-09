@@ -15,6 +15,23 @@
   installed, History marks ranked duels the site confirmed (both players'
   signatures checked) with a ✔.
 - Reports you made are sent to the moderators with your next upload.
+- **Setup guide:** a short popup after your first login walks you through
+  ranked duels, the rank widget and uploading. Skip it or run it again any
+  time with `/duelelo setup` (also a button in the main window and Options).
+- The rank widget is now off until you turn it on (`/duelelo widget show` or
+  Options); the main window's Discord and Options buttons no longer overlap
+  the tabs.
+- **Stream-safe upload codes:** the code stays hidden in the copy box
+  (Ctrl+C still copies it; *Show code* reveals it) and in the box on
+  duelelo.com/upload, which also has a *Paste from clipboard* button.
+- **Clearer ranked rules:** the setup guide has a "How ranked works" step,
+  the ranked prompt has a **?** with the rules, and *Strict* is now called
+  *Wait for cooldowns* (`/duelelo cooldowns on|off`; `strict` still works).
+- Fixed: ranked was impossible on WoW Forever, which hides health and mana
+  from addons. Those two checks now show as *unchecked* instead of blocking.
+- Fixed: the hidden leaderboard channel could take `/1` and push General and
+  Trade down a number. It now always stays behind every other channel and is
+  left at logout, so the game can't rejoin it early.
 - Fixed: challenging with `/duel` (no name, or `/duel Name`) now starts the
   ranked handshake like the right-click menu does.
 - **Your build on the site:** when a duel starts, DuelElo notes your own gear,

@@ -4,7 +4,7 @@ local _, ns = ...
 local Data = {}
 ns.Data = Data
 
-Data.SCHEMA = 2
+Data.SCHEMA = 3
 Data.MAX_HISTORY = 1000   -- detailed entries kept; totals are kept forever
 
 local function newChar()
@@ -86,6 +86,13 @@ CHAR_MIGRATIONS[2] = function(db)
         if type(e) == "table" and e.ranked then e.legacy = true end
     end
     db.glicko, db.lastRanked = nil, nil
+end
+
+-- Schema 3 (v0.6): the rank widget is opt-in. Hide it once for test installs
+-- that saved the old "on by default"; /duelelo widget show turns it back on.
+ACCOUNT_MIGRATIONS[3] = function(db)
+    local w = type(db.settings) == "table" and db.settings.widget
+    if type(w) == "table" then w.shown = false end
 end
 
 local function migrate(db, steps)

@@ -104,7 +104,7 @@ end)
 
 test("schema 2 migration archives Elo and starts Glicko fresh, keeping history", function()
     local db = Data.InitChar(dofile("tests/fixtures/v1_char.lua"))
-    eq(db.schema, 2)
+    eq(db.schema, Data.SCHEMA)
     eq(db.legacy, { rating = 1452, games = 25, w = 16, l = 9, peak = 1510 })
     eq(db.rating, 1200)
     eq(db.glicko, { r = 1200, rd = 350, sigma = 0.06 })
@@ -134,12 +134,25 @@ test("schema 2 saves are not migrated again", function()
     eq(db.legacy.rating, 1452)
 end)
 
-test("account SavedVariables move to schema 2 untouched", function()
+test("account SavedVariables move to the current schema untouched", function()
     local db = Data.InitAccount({ schema = 1, players = { ["A-R"] = { rating = 1500, games = 3 } },
         settings = { rankedPref = "always" } })
-    eq(db.schema, 2)
+    eq(db.schema, Data.SCHEMA)
     eq(db.players["A-R"].rating, 1500)
     eq(db.settings.rankedPref, "always")
+end)
+
+test("schema 3 hides a widget saved as shown, once", function()
+    local db = Data.InitAccount({ schema = 2, settings = { widget = { shown = true, preset = "full" } } })
+    eq(db.schema, 3)
+    eq(db.settings.widget.shown, false)
+    eq(db.settings.widget.preset, "full", "other widget settings kept")
+    db.settings.widget.shown = true
+    eq(Data.InitAccount(db).settings.widget.shown, true, "turning it back on sticks")
+end)
+
+test("a fresh account starts with the widget hidden", function()
+    eq(Data.InitAccount(nil).settings.widget.shown, false)
 end)
 
 ---------------------------------------------------------------------------
